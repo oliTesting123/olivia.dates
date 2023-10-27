@@ -22,7 +22,11 @@ class TokenAuthMiddleware
         if (empty($tokenOne)) {
             $this->isValidToken($tokenTwo);
         }else{
-            return response()->json(['message' => 'Token de autenticación no válido'], 401);
+            if(!empty($tokenOne)){
+                $this->isValidToken($tokenTwo);
+            }else{
+                return response()->json(['message' => 'Token de autenticación no válido'], 401);
+            }
         }
 
         return $next($request);
