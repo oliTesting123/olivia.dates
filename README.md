@@ -24,13 +24,13 @@ Generate routes with comand
 
 In postman:
 
-1.-Método HTTP: POST
-2.- URL: http://api/products
-3.- Cabecera: Asegúrese de que la cabecera(Headers) Content-Type esté configurada como application/json.
+1.-Método HTTP: POST y GET
+2.- URL: http://api/dates
+3.- Cabecera: Asegúrese de que la cabecera(Headers) _token value= D8Xu3Uw521mx5YkRKuAqTyGdyRArkJ4AemhZtM5L
 4.- Cuerpo (Body): Selecciona rawy JSONproporciona los datos del nuevo producto.
 
-1.- Método HTTP: PUT
-2.- URL: http://api/products/1 (donde 1está el ID del producto que deseas actualizar)
-3.- Cabecera: Asegúrese de que la cabecera Content-Typeesté configurada como application/json.
+1.- Método HTTP: PUT y DELETE
+2.- URL: http://api/create/1 (donde 1está el ID de usuario dela cita que deseas actualizar)
+3.- Cabecera: Asegúrese de que la cabecera _token value= D8Xu3Uw521mx5YkRKuAqTyGdyRArkJ4AemhZtM5L
 4.- Cuerpo (Body): Selecciona raw y JSON proporciona los datos actualizados del producto.
 
