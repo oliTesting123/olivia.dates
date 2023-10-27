@@ -16,14 +16,16 @@ class TokenAuthMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        // $token = $request->input('_token');
-        $token = $request->header('_token');
+        $tokenOne = $request->input('_token');
+        $tokenTwo = $request->header('_token');
         
-
-        if (empty($token) || !$this->isValidToken($token)) {
-
-            return response()->json(['message' => 'Token de autenticación no válido', 't' => $token], 401);
+        if (empty($tokenOne)) {
+            $this->isValidToken($tokenTwo);
+        }else{
+            return response()->json(['message' => 'Token de autenticación no válido'], 401);
         }
+
+        
 
         return $next($request);
 
@@ -31,7 +33,9 @@ class TokenAuthMiddleware
     
     private function isValidToken($token)
     {
-        // return $token === csrf_token(); 
-        return $token ==='eSVFXMLyH8Qe8MxLkSesKPumUMgIuR5JT8JZQDCp';
+        if($token === csrf_token() || $token === 'eSVFXMLyH8Qe8MxLkSesKPumUMgIuR5JT8JZQDCp'){
+            return true;
+        }
     }
+
 }
