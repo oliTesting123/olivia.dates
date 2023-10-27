@@ -8,6 +8,7 @@ use App\Models\Users;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Rules\CurpValidation;
+use Illuminate\Validation\ValidationException;
 
 
 class DatesController extends Controller
@@ -19,8 +20,6 @@ class DatesController extends Controller
      */
     public function index(Request $request)
     {
-        $successMessage = $request->session()->get('success');
-
         return view('welcome');
     }
 
@@ -47,19 +46,6 @@ class DatesController extends Controller
         $request->merge([
             'curp' => strtoupper($request->input('curp')),
         ]);
-        // $curp = $request->input('curp');
-
-        // $user = Users::where('curp', $curp)->first();
-
-        // if($user){
-        //     $iserData = [
-        //         'curp' => $user->id
-        //     ];
-
-        //     return $this->processUser($userData, $user->id);
-        // }
-
-        // return redirect()->route('create');
     }
 
     public function searchUser(Request $request)
@@ -77,46 +63,49 @@ class DatesController extends Controller
                 'id' => $user->id
             ];
             $id = $userData['id'];
+
             return $this->processUser($userData, $id);
         }else{
             $userData = $this->createUser($curp);
             if($userData){
                 $userId = $userData['id'];
-                $dataDate = $this->generateNewDate($userId);
+                $dateData = $this->generateNewDate($userId);
 
-                return view('create', ['userData' => $userData, 'dataDate' => $dataDate]);
+                return view('create', ['userData' => $userData, 'dateData' => $dateData]);
             }
         }
 
-        return view('create');
     }
 
     private function processUser($userData, $userId){
-        
-        $date = Dates::where('user_id', $userId)->first();
+        $date = Dates::where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('status', 'active')
+                      ->orWhere('status', 'canceled');
+            })
+            ->first();
+            
 
-        if($date){
-            if($date->status === 'active'){
-
-                // $date->date_at = Carbon::parse($date->date_at)->format('Y-m-d H:i:s');
-                //  $date['date_at'] == $date->date_at->format('l, j F Y h:i A');
-                 $date['date_at'] = Carbon::parse($date['date_at'])->format('l, j F Y h:i A');
-
-                // dump("DAFAFAF", $date->date_at->format('l, j F Y h:i A'));
-
+        if($date && $date['status'] == "active"){
                 return view('create', ['userData' => $userData, 'dateData' => $date]);
-            } elseif ($date->status === 'canceled'){
-                $newDate = $this->generateNewDate($userId);
-
-                return view('create', ['userData' => $userData, 'dateData' => $newDate]);
-            }
         }
 
-        // $newDate = $this->generateNewDate($userId);
-        // dump("Hola", $newDate);
-        //return view('create', ['userData' => $userData, 'citaData' => $newDate]);
+        if($date && $date['status'] == "canceled"){
+            $date = Dates::where('user_id', $userId)->first();
+            $date->delete();
+
+            $newDate = $this->generateNewDate($userId);
+
+            return view('create', ['userData' => $userData, 'dateData' => $newDate]);
+        }
+        if(!$date){
+            $newDate = $this->generateNewDate($userId);
+
+            return view('create', ['userData' => $userData, 'dateData' => $newDate]);
+        }
     }
 
+    
     private function generateNewDate($userId){
         $newDate = new Dates();
         $newDate->user_id = $userId;
@@ -126,8 +115,6 @@ class DatesController extends Controller
         $newDate->address ='Col. Auditorio 2323';
         $newDate->save();
 
-        // $newDate->date_at = Carbon::parse($newDate->date_at)->format('Y-m-d H:i:s');
-
         return $newDate;
     }
 
@@ -135,8 +122,6 @@ class DatesController extends Controller
         $newUser = new Users();
         $newUser->curp = $curp;
         $newUser->save();
-
-
 
         return $newUser;
     }
@@ -149,17 +134,7 @@ class DatesController extends Controller
      */
     public function show($id)
     {
-        // $usuario = Usuarios::find($id);
-
-        // if ($usuario) {
-        //     return response()->json([
-        //         'id' => $usuario->id,
-        //         'nombre' => $usuario->nombre,
-        //         'correo' => $usuario->correo,
-        //     ]);
-        // } else {
-        //     return response()->json(['mensaje' => 'Usuario no encontrado.'], 404);
-        // }
+        // return "JOAALAL";
     }
 
     /**
@@ -216,4 +191,138 @@ class DatesController extends Controller
         // Resto de la lógica si la validación es exitosa
     }
 
+    public function getDates()
+    {
+
+        $dates=DB::table('dates')
+                ->select('id','user_id','module','address')
+                ->get();
+        
+        return $dates;
+    }
+
+    public function postDate(Request $request)
+    {
+        try {
+            $request->validate([
+                'curp' => ['required', new CurpValidation],
+            ]);
+    
+            $curp = $request->curp;
+            $user = Users::where('curp', $curp)->first();
+    
+            if($user){
+                $userData = [
+                    'curp' => $user->curp,
+                    'id' => $user->id
+                ];
+                $id = $userData['id'];
+                return $this->processUserApi($userData, $id);
+            }else{
+                $userData = $this->createUser($curp);
+                if($userData){
+                    $userId = $userData['id'];
+                    $dataDate = $this->generateNewDate($userId);
+
+                    $responseData = [
+                        'userData' => $userData,
+                        'dateData' => $dataDate
+                    ];
+
+                return response()->json(['data' => $responseData], 201);
+            }
+        }
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
+    }
+
+    private function processUserApi($userData, $userId){
+        $date = Dates::where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('status', 'active')
+                      ->orWhere('status', 'canceled');
+            })
+            ->first();
+            
+
+        if($date && $date['status'] == "active"){
+            $responseData = [
+                'userData' => $userData,
+                'dateData' => $date
+            ];
+            return response()->json(['data' => $responseData], 201);
+        }
+
+        if($date && $date['status'] == "canceled"){
+            $date = Dates::where('user_id', $userId)->first();
+            $date->delete();
+
+            $newDate = $this->generateNewDate($userId);
+
+                $responseData = [
+                    'userData' => $userData,
+                    'dateData' => $newDate
+                ];
+
+                return response()->json(['data' => $responseData], 201);
+        }
+        if(!$date){
+            $newDate = $this->generateNewDate($userId);
+            $responseData = [
+                'userData' => $userData,
+                'dateData' => $newDate
+            ];
+
+            return response()->json(['data' => $responseData], 201);
+        }
+        
+    }
+
+    public function updateDate(Request $request, $id){
+        $token = $request->input('_token');
+
+        $dateData = Dates::where('user_id', $id)->first();
+        $userData = Users::where('id', $id)->first();
+
+        if (!$dateData) {
+            return response()->json(['message' => 'Recurso no encontrado'], 404);
+        }
+
+        $dateData->updated_at = Carbon::now();
+        $dateData->status = "canceled";
+        $dateData->save();
+
+        return view('create', ['userData' => $userData, 'dateData' => $dateData]);
+    }
+
+    public function updateDateApi(Request $request, $id){
+        // $token = $request->input('_token');
+
+        $date = Dates::where('user_id', $id)->first();
+
+        if (!$date) {
+            return response()->json(['message' => 'Recurso no encontrado'], 404);
+        }
+
+        $date->updated_at = Carbon::now();
+        $date->status = "canceled";
+        $date->save();
+
+        return response()->json(['Cita actualizada' => $date], 404);
+    }
+
+    public function deleteDate(Request $request, $id){
+        $token = $request->input('_token');
+
+        $date = Dates::where('user_id', $id)->first();
+
+        if (!$date) {
+            return response()->json(['message' => 'Cita no encontrada'], 404);
+        }
+        
+        $date->delete();
+
+        return response()->json(['message' => 'Cita eliminada'], 204);
+    }
 }

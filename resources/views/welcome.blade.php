@@ -83,8 +83,7 @@
                                     </div>
                                 </div>
                                 
-                                
-                                <form methot="POST" action="{{ route('created')}}">
+                                <form methot="POST" action="{{ route('created-post')}}">
                                     <div class="row">
                                         <div class="col-8">
                                             @csrf

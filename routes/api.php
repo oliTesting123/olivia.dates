@@ -14,12 +14,16 @@ use App\Http\Controllers\DatesController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+// Route::middleware('api')->group(function () {
+    // Tus rutas de API aquí
+    Route::get('/dates', [DatesController::class, 'getDates']);
+    Route::post('/dates', [DatesController::class, 'postDate']);
+    Route::put('/create/{user_id}', [DatesController::class, 'updateDate'])
+        ->middleware('token-auth')
+        ->name('update-date-api');
+    Route::delete('/create/{user_id}', [DatesController::class, 'deleteDate'])
+        ->middleware('token-auth')
+        ->name('delete-date-api');
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
+    Route::get('/create', [DatesController::class, 'getToken']);
 // });
-
-// Route::middleware('auth:sanctum')->get('/products', function (Request $request) {
-//     return $request->products();
-// });
-Route::apiResource('/', DatesController::class);

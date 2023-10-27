@@ -89,50 +89,8 @@ class UsersController extends Controller
 
     public function searchUser(Request $request)
     {
-        $holaaa = "HAOALALA";
-        $curp = $request->input('curp');
-
-        dump($request);
-        // Aquí puedes realizar las funciones que necesitas con la CURP
-        return view('create', ['curp' => $curp]);
-        // $curp = $request->input('curp');
-
-        // $user = User::where('curp', $curp)->first();
-
-        // if($user){
-        //     $iserData = [
-        //         'curp' => $user->id
-        //     ];
-
-        //     return $this->processUser($userData, $user-id);
-        // }
-
-        // return redirect()->route('create');
+        
     }
 
-    private function processUser($userData, $userId){
-        $date = Dates::where('user_id', $userId)->first();
-
-        if($date){
-            if($date->status === 'active'){
-                return view('create', ['userData' => $userData, 'citaData' => $date]);
-            } elseif ($cita->status === 'canceled'){
-                $newDateCita = $this->generateNewDate($userId);
-
-                return view('create', ['userData' => $userData, 'citaData' => $newDate]);
-            }
-        }
-
-        $newDate = $this->generateNewDate($userId);
-        return vew('create', ['userData' => $userData, 'citaData' => $newDate]);
-    }
-
-    private function generateNewDate($userId){
-        $newDate = new Dates();
-        $newDate->user_id = $userId;
-        $newDate->status ='active';
-        $newDate->save();
-
-        return $newDate;
-    }
+    
 }

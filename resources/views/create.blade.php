@@ -18,9 +18,18 @@
                             <p class="initial-color" style="margin: 10px 5px; font-size: 22px">Regsitro concluido</p>
                     </div>
                     <div class="col-6 cont-rigth">
-                        <button class="btn btn-danger icon-button"  style="margin: 10px 0px;">
-                            <i><img src="{{ asset('images/ico_cancel.svg') }}"></i> Quiero cancelar mi cita
-                        </button>
+                        <form method="POST" action="{{ route('update-date', ['user_id' => $dateData->user_id]) }}">
+                            @csrf
+                            @method('PUT')
+                            <button class="btn btn-danger icon-button"  style="margin: 10px 0px;" type="submit">
+                                <i><img src="{{ asset('images/ico_cancel.svg') }}"></i> Quiero cancelar mi cita
+                            </button>
+                            @if(isset($successMessage))
+                                <div class="alert alert-success">
+                                    {{ $successMessage }}
+                                </div>
+                            @endif
+                        </form>
                     </div>
                 </div>
 

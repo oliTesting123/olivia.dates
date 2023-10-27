@@ -13,7 +13,7 @@ class CurpValidation implements Rule
      */
     public function __construct()
     {
-        //
+        // $this->middleware('web');
     }
 
     /**

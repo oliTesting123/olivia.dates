@@ -8,12 +8,12 @@
             class="gob-jal-def pl-4 lg:pl-12">
 
             <ul class="nav-menu z-50">
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link" href="" title="Calcula tu próxima dosis"> Clacula tu próxima dosis</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="" title="Aviso de privacidad"> Aviso de privacidad</a>
-                </li>
+                </li> -->
             </ul>
         </div>
     </div>
