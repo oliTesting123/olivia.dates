@@ -1,0 +1,38 @@
+.init {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.foot-b {
+    /* top: 813px;
+    left: 0px;
+    width: auto;
+    height: 264px; */
+    /* UI Properties */
+    /* position: fixed;
+    left: 0;
+    bottom: 0; */
+    height: 264px;
+    background: #FAFAFA 0% 0% no-repeat padding-box;
+    
+}
+
+.rw {
+    margin-left: 2rem;
+    margin-right: 2rem;
+    flex-flow: wrap;
+    align-items: center;
+}
+
+.img-custom {
+    max-width: 100%; 
+    height: auto;
+  }
+
+.content-imgs {
+    display: flex;
+    /* width: 219px;
+    height: 87px; */
+}
