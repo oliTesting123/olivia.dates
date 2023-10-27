@@ -31,9 +31,9 @@ class Dates extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'user_id',
-        'date_at',
-        'status'
+        // 'user_id',
+        // 'date_at',
+        // 'status'
     ];
 
     /**

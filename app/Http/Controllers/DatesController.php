@@ -296,20 +296,20 @@ class DatesController extends Controller
         return view('create', ['userData' => $userData, 'dateData' => $dateData]);
     }
 
-    public function updateDateApi(Request $request, $id){
-        // $token = $request->input('_token');
+    public function updateDateApi(Request $request, $user_id){
+        $token = $request->header('_token');
 
-        $date = Dates::where('user_id', $id)->first();
+        $date = Dates::where('user_id', $user_id)->first();
 
         if (!$date) {
-            return response()->json(['message' => 'Recurso no encontrado'], 404);
+            return response()->json(['message' => 'La cita no fue encontrado'], 404);
         }
 
         $date->updated_at = Carbon::now();
         $date->status = "canceled";
         $date->save();
 
-        return response()->json(['Cita actualizada' => $date], 404);
+        return response()->json(['Cita actualizada' => $date], 200);
     }
 
     public function deleteDate(Request $request, $id){

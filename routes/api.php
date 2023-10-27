@@ -18,7 +18,7 @@ use App\Http\Controllers\DatesController;
     // Tus rutas de API aquí
     Route::get('/dates', [DatesController::class, 'getDates']);
     Route::post('/dates', [DatesController::class, 'postDate']);
-    Route::put('/create/{user_id}', [DatesController::class, 'updateDate'])
+    Route::put('/create/{user_id}', [DatesController::class, 'updateDateApi'])
         ->middleware('token-auth')
         ->name('update-date-api');
     Route::delete('/create/{user_id}', [DatesController::class, 'deleteDate'])

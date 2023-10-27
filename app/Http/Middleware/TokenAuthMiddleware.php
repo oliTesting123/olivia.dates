@@ -25,16 +25,15 @@ class TokenAuthMiddleware
             return response()->json(['message' => 'Token de autenticación no válido'], 401);
         }
 
-        
-
         return $next($request);
-
     }
     
     private function isValidToken($token)
     {
-        if($token === csrf_token() || $token === 'eSVFXMLyH8Qe8MxLkSesKPumUMgIuR5JT8JZQDCp'){
+        if($token === csrf_token() || $token == 'eSVFXMLyH8Qe8MxLkSesKPumUMgIuR5JT8JZQDCp'){
             return true;
+        }else{
+            return false;
         }
     }
 
